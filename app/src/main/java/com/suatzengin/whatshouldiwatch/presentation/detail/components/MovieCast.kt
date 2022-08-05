@@ -30,7 +30,7 @@ fun MovieCast(
 ) {
     Column(modifier = modifier) {
         Text(
-            text = "Oyuncu Kadrosu", color = categoryColor,
+            text = "Cast", color = categoryColor,
             modifier = Modifier
                 .padding(start = 16.dp, top = 12.dp),
             fontWeight = FontWeight.Bold,

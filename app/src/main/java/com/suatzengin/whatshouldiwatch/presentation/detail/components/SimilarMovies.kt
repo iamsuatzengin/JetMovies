@@ -30,7 +30,7 @@ fun SimilarMovies(
 ) {
     Column(modifier = modifier) {
         Text(
-            text = "Benzer", color = categoryColor,
+            text = "Similar", color = categoryColor,
             modifier = Modifier
                 .padding(start = 16.dp, top = 8.dp),
             fontWeight = FontWeight.Bold,

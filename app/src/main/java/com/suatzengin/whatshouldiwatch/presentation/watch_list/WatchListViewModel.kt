@@ -9,6 +9,7 @@ import com.suatzengin.whatshouldiwatch.data.local.entities.MovieEntity
 import com.suatzengin.whatshouldiwatch.domain.repository.LocalRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -21,15 +22,33 @@ class WatchListViewModel @Inject constructor(
     private val _state = mutableStateOf(WatchListState())
     val state: State<WatchListState> get() = _state
 
+    private var deletedMovie: MovieEntity? = null
+
     init {
         getWatchList()
     }
 
-    fun onEvent(event: WatchListEvent){
-        when(event){
-            is WatchListEvent.SwipeToDelete -> {
+    fun onEvent(event: WatchListEvent) {
+        when (event) {
+            is WatchListEvent.WatchList -> {
+                getWatchList()
+            }
+            is WatchListEvent.DeleteMovie -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     localRepository.delete(movie = event.movie)
+                    deletedMovie = event.movie
+                    _state.value = state.value.copy(
+                        list = state.value.list.filter {
+                            it != deletedMovie
+                        } as MutableList<MovieEntity>
+                    )
+                }
+            }
+            is WatchListEvent.RestoreMovie -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    localRepository.insert(deletedMovie ?: return@launch)
+                    deletedMovie = null
+                    getWatchList()
                 }
             }
         }
@@ -37,30 +56,36 @@ class WatchListViewModel @Inject constructor(
 
     private fun getWatchList() {
         viewModelScope.launch {
-            localRepository.getWatchList().collect { result ->
+            localRepository.getWatchList().distinctUntilChanged().collect { result ->
                 withContext(Dispatchers.Main) {
                     when (result) {
                         is Resource.Success -> {
-                            _state.value = WatchListState(
-                                list = result.data ?: emptyList(),
-                                isEmpty = result.data.isNullOrEmpty()
+                            _state.value = state.value.copy(
+                                list = (result.data ?: mutableListOf()) as MutableList<MovieEntity>,
+                                isEmpty = result.data.isNullOrEmpty(),
+                                isLoading = false
                             )
                         }
                         is Resource.Loading -> {
-                            _state.value = WatchListState(isLoading = true, isEmpty = false)
+                            _state.value = state.value.copy(
+                                isLoading = true,
+                                isEmpty = false,
+                                list = arrayListOf(), error = ""
+                            )
                         }
                         is Resource.Error -> {
                             _state.value =
-                                WatchListState(isEmpty = false, error = "${result.message} Error")
+                                state.value.copy(isEmpty = false, error = "${result.message} Error")
                         }
                     }
-
                 }
             }
         }
     }
 }
 
-sealed class WatchListEvent{
-    data class SwipeToDelete(val movie: MovieEntity): WatchListEvent()
+sealed class WatchListEvent {
+    object WatchList : WatchListEvent()
+    data class DeleteMovie(val movie: MovieEntity) : WatchListEvent()
+    object RestoreMovie : WatchListEvent()
 }

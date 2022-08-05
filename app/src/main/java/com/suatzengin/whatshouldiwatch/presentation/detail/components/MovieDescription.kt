@@ -18,7 +18,7 @@ fun MovieDescription(
 ) {
     Column(modifier = modifier) {
         Text(
-            text = "Açıklama", color = categoryColor,
+            text = "Description", color = categoryColor,
             modifier = Modifier
                 .padding(start = 16.dp, top = 12.dp),
             fontWeight = FontWeight.Bold,

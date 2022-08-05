@@ -65,7 +65,7 @@ fun PopularHomeItem(
         )
         Column {
             val annotatedString = buildAnnotatedString {
-                withStyle(style = SpanStyle(color = Color.Black)) {
+                withStyle(style = SpanStyle()) {
                     append(popular.originalTitle)
                 }
                 withStyle(

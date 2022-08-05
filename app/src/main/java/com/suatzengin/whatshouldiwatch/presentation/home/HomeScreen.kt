@@ -63,7 +63,7 @@ fun HomeScreen(
                     }
                     is HomeType.Popular -> {
                         item {
-                            Header(header = "Popüler", onClickSeeMore = {
+                            Header(header = "Popular", onClickSeeMore = {
                                 navController.navigate(Screen.Popular.route)
                             })
                         }

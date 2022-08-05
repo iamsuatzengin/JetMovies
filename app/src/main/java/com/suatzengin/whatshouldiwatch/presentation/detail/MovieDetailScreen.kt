@@ -181,15 +181,15 @@ fun MovieDetailScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column {
-                    Text(text = "Süre", color = Color.LightGray, fontSize = 16.sp)
+                    Text(text = "Time", color = Color.LightGray, fontSize = 16.sp)
                     Text(text = "${movie.runtime?.minutes}")
                 }
                 Column {
-                    Text(text = "Dil", color = Color.LightGray, fontSize = 16.sp)
+                    Text(text = "Language", color = Color.LightGray, fontSize = 16.sp)
                     Text(text = movie.spokenLanguages[0].englishName)
                 }
                 Column {
-                    Text(text = "Durum", color = Color.LightGray, fontSize = 16.sp)
+                    Text(text = "Status", color = Color.LightGray, fontSize = 16.sp)
                     Text(text = movie.status)
                 }
 
