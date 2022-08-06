@@ -99,15 +99,14 @@ fun WatchListItem(
                         Text(text = "Time: ", color = Color.LightGray)
                         Text(text = "${movie.runtime?.minutes}")
                     }
-                    IconButton(onClick = { openDialog.value = true },
-                        modifier = Modifier.size(18.dp)) {
+                    IconButton(
+                        onClick = { openDialog.value = true },
+                        modifier = Modifier.size(18.dp)
+                    ) {
                         Icon(imageVector = Icons.Default.Delete, contentDescription = "")
                     }
                 }
-
             }
-
-
             AnimatedVisibility(visible = expanded) {
                 Text(
                     text = "${movie.overview}",
@@ -119,9 +118,9 @@ fun WatchListItem(
             if (openDialog.value) {
                 DeleteAlertDialog(
                     title = movie.title,
-                    isOpendDialog = openDialog) {
-                    onDelete()
-                }
+                    isOpendDialog = openDialog,
+                    onDelete = onDelete
+                )
             }
         }
     }
